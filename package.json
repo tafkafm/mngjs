@@ -1,0 +1,50 @@
+{
+  "name": "@tafkafm/mngjs",
+  "version": "1.0.3",
+  "description": "Mongo-like queries and aggregation for JS",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "node test/test.js && node test/compile.test.js",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tafkafm/mngjs.git"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib"
+  ],
+  "keywords": [
+    "mongo",
+    "mongodb",
+    "state machine",
+    "rule engine",
+    "query",
+    "aggregation",
+    "js",
+    "javascript"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "tafkafm",
+  "license": "MIT",
+  "dependencies": {
+    "fast-deep-equal": "^3.1.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.2.0",
+    "globals": "^17.4.0"
+  }
+}

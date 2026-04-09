@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+        # Runners default to UTC regardless of OS, which silently hides bugs
+        # where date parsing/formatting depends on the host's local timezone.
+        # Pacific/Kiritimati (UTC+14) is the most extreme real-world offset,
+        # chosen deliberately to make such bugs maximally obvious.
+        tz: [UTC, Europe/Berlin, Pacific/Kiritimati]
+    env:
+      TZ: ${{ matrix.tz }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  bundle-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      # Not saved to package.json — these tools are CI-only concerns, not part
+      # of the actual dev/test workflow.
+      - run: npm install --no-save --no-audit --no-fund esbuild@0.24 rollup@4 @rollup/plugin-node-resolve @rollup/plugin-commonjs
+      - name: esbuild bundle (covers webpack/generic bundler resolution)
+        run: npx esbuild index.js --bundle --platform=browser --format=esm --outfile=/tmp/bundle-esbuild.js
+      - name: Rollup bundle (Vite's actual production bundler)
+        run: npx rollup --config .github/rollup.smoke.config.mjs
